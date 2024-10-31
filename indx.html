@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Create Your Own Chatbot</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700,300">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.1.2/css/material-design-iconic-font.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400&family=Finger+Paint&display=swap">
+  </head>
+  <body>
+<body>
+    
+
+
+  <div class="card">
+    <div id="header">
+      <h1>Chatbot</h1>
+    </div>
+    <div id="message-section">
+      <div class="message" id="bot"><span id="bot-response">Hello.. I'm listening! Go on..</span></div>
+    </div>
+    <div id="input-section">
+      <input id="input" type="text" placeholder="Type a message" autocomplete="off" autofocus="autofocus"/>
+      <button class="send" onclick="sendMessage()">
+        <button  onclick="sendMessage()"><img src="https://cdn-icons-png.flaticon.com/128/10322/10322482.png" width="30"height="50"></button>
+        <button onclick="startRecognition()"><img src="https://cdn-icons-png.flaticon.com/128/25/25682.png" width="30"height="50"></button>
+        
+      </button>
+    </div>
+  </div>
+  <script>
+    const userMessage = [
+      ["hi", "hey", "hello"],
+      ["sure", "yes", "no"],
+      ["are you genious", "are you nerd", "are you intelligent"],
+      ["i hate you", "i dont like you"],
+      ["how are you", "how is life", "how are things", "how are you doing"],
+      ["how is corona", "how is covid 19", "how is covid19 situation"],
+      ["what are you doing", "what is going on", "what is up"],
+      ["how old are you"],
+      ["who are you", "are you human", "are you bot", "are you human or bot"],
+      ["who created you", "who made you", "who is your creator"],
+      ["your name please", "your name", "may i know your name", "what is your name", "what call yourself"],
+      ["i love you"],
+      ["happy", "good", "fun", "wonderful", "fantastic", "cool", "very good"],
+      ["bad", "bored", "tired"],
+      ["help me", "tell me story", "tell me joke"],
+      ["ah", "ok", "okay", "nice", "welcome"],
+      ["thanks", "thank you"],
+      ["what should i eat today"],
+      ["bro"],
+      ["what", "why", "how", "where", "when"],
+      ["corona", "covid19", "coronavirus"],
+      ["you are funny"],
+      ["i dont know"],
+      ["boring"],
+      ["im tired"],
+      ["what is javascript", "define javascript", "explain javascript"],
+      ["what is python", "define python", "explain python"],
+      ["what is machine learning", "explain machine learning"],
+      ["what is artificial intelligence", "explain artificial intelligence"],
+      ["what is html", "explain html"],
+      ["what is css", "explain css"],
+      ["what is api", "explain api"],
+      ["what is cloud computing", "explain cloud computing"],
+      ["what is blockchain", "explain blockchain"],
+      ["what is sql", "explain sql"]
+    ];
+
+    const botReply = [
+      ["Hello!", "Hi!", "Hey!", "Hi there!"],
+      ["Okay"],
+      ["Yes I am! "],
+      ["I'm sorry about that. But I like you dude."],
+      ["Fine... how are you?", "Pretty well, how are you?", "Fantastic, how are you?"],
+      ["Getting better. There?", "Somewhat okay!", "Yeah fine. Better stay home!"],
+      ["Nothing much", "About to go to sleep", "Can you guess?", "I don't know actually"],
+      ["I am always young."],
+      ["I am just a bot", "I am a bot. What are you?"],
+      ["Dept of cse[artificial intelligence] student"],
+      ["Im named as ", "I don't have a name"],
+      ["I love you too", "Me too"],
+      ["Have you ever felt bad?", "Glad to hear it"],
+      ["Why?", "Why? You shouldn't!", "Try watching TV", "Chat with me."],
+      ["What about?", "Once upon a time..."],
+      ["Tell me a story", "Tell me a joke", "Tell me about yourself"],
+      ["You're welcome"],
+      ["Briyani", "Burger", "Sushi", "Pizza"],
+      ["Dude!"],
+      ["Yes?"],
+      ["Please stay home"],
+      ["Glad to hear it"],
+      ["Say something interesting"],
+      ["Sorry for that. Let's chat!"],
+      ["Take some rest, Dude!"],
+      ["JavaScript is a versatile programming language primarily used for creating interactive effects within web browsers.", "JavaScript is often used to enhance the user experience by making web pages interactive."],
+      ["Python is a high-level, interpreted programming language known for its readability and versatility.", "Python is used in various fields such as web development, data analysis, artificial intelligence, and more."],
+      ["Machine learning is a branch of artificial intelligence that involves teaching computers to learn from data and improve their performance over time without being explicitly programmed.", "Machine learning algorithms are used for tasks such as image recognition, natural language processing, and predictive analytics."],
+      ["Artificial intelligence (AI) is the simulation of human intelligence processes by machines, especially computer systems.", "AI applications include expert systems, natural language processing, speech recognition, and machine vision."],
+      ["HTML (HyperText Markup Language) is the standard language for creating web pages and web applications.", "HTML describes the structure of a web page, and it is used to create and organize content."],
+      ["CSS (Cascading Style Sheets) is a style sheet language used for describing the presentation of a document written in HTML or XML.", "CSS describes how elements should be rendered on screen, on paper, or in other media."],
+      ["An API (Application Programming Interface) is a set of rules that allows different software entities to communicate with each other.", "APIs are used to enable the integration of different systems and the creation of complex applications."],
+      ["Cloud computing is the delivery of computing services over the internet, including storage, processing, and networking.", "Cloud computing allows for scalable resources and remote accessibility, reducing the need for physical infrastructure."],
+      ["Blockchain is a distributed ledger technology that enables secure, transparent, and tamper-proof record-keeping.", "Blockchain is the underlying technology for cryptocurrencies like Bitcoin and has applications in various fields such as finance, supply chain, and healthcare."],
+      ["SQL (Structured Query Language) is a standardized language used for managing and manipulating relational databases.", "SQL is used to query, insert, update, and delete data within a database."]
+    ];
+
+    const alternative = ["Same here, dude.", "That's cool! Go on...", "Dude...", "Ask something else...", "Hey, I'm listening..."];
+
+    const synth = window.speechSynthesis;
+
+    function voiceControl(string) {
+      let u = new SpeechSynthesisUtterance(string);
+      u.text = string;
+      u.lang = "en-aus";
+      u.volume = 1;
+      u.rate = 1;
+      u.pitch = 1;
+      synth.speak(u);
+    }
+
+    function sendMessage() {
+      const inputField = document.getElementById("input");
+      let input = inputField.value.trim();
+      if (input) output(input);
+      inputField.value = "";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const inputField = document.getElementById("input");
+      inputField.addEventListener("keydown", function (e) {
+        if (e.code === "Enter") {
+          let input = inputField.value.trim();
+          if (input) output(input);
+          inputField.value = "";
+        }
+      });
+    });
+
+    function output(input) {
+      let text = input.toLowerCase().replace(/[^\w\s\d]/gi, "");
+
+      text = text
+        .replace(/ a /g, " ")
+        .replace(/i feel /g, "")
+        .replace(/whats/g, "what is")
+        .replace(/please /g, "")
+        .replace(/ please/g, "")
+        .trim();
+
+      let comparedText = compare(userMessage, botReply, text);
+
+      let product = comparedText
+        ? comparedText
+        : alternative[Math.floor(Math.random() * alternative.length)];
+
+      addChat(input, product);
+    }
+
+    function compare(triggerArray, replyArray, string) {
+      let item;
+      for (let x = 0; x < triggerArray.length; x++) {
+        for (let y = 0; y < triggerArray[x].length; y++) {
+          if (triggerArray[x][y] === string) {
+            let items = replyArray[x];
+            item = items[Math.floor(Math.random() * items.length)];
+            break;
+          }
+        }
+        if (item) break;
+      }
+      if (item) return item;
+      else return containMessageCheck(string);
+    }
+
+    function containMessageCheck(string) {
+      const expectedReply = [
+        ["Good Bye, dude", "Bye, See you!", "Dude, Bye. Take care of your health in this situation."],
+        ["Good Night, dude", "Have a sound sleep", "Sweet dreams"],
+        ["Have a pleasant evening!", "Good evening too", "Evening!"],
+        ["Good morning, Have a great day!", "Morning, dude!"],
+        ["Good Afternoon", "Noon, dude!", "Afternoon, dude!"]
+      ];
+      const expectedMessage = [
+        ["bye", "tc", "take care"],
+        ["night", "good night"],
+        ["evening", "good evening"],
+        ["morning", "good morning"],
+        ["noon"]
+      ];
+      let item;
+      for (let x = 0; x < expectedMessage.length; x++) {
+        if (expectedMessage[x].includes(string)) {
+          let items = expectedReply[x];
+          item = items[Math.floor(Math.random() * items.length)];
+          break;
+        }
+      }
+      return item;
+    }
+
+    function addChat(input, product) {
+      const mainDiv = document.getElementById("message-section");
+      let userDiv = document.createElement("div");
+      userDiv.id = "user";
+      userDiv.classList.add("message");
+      userDiv.innerHTML = `<span id="user-response">${input}</span>`;
+      mainDiv.appendChild(userDiv);
+
+      let botDiv = document.createElement("div");
+      botDiv.id = "bot";
+      botDiv.classList.add("message");
+      botDiv.innerHTML = `<span id="bot-response">${product}</span>`;
+      mainDiv.appendChild(botDiv);
+
+      let scroll = document.getElementById("message-section");
+      scroll.scrollTop = scroll.scrollHeight;
+      voiceControl(product);
+    }
+
+    // Voice Recognition Setup
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const recognition = new SpeechRecognition();
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = function (event) {
+      const transcript = event.results[0][0].transcript.trim();
+      output(transcript);
+    };
+
+    function startRecognition() {
+      recognition.start();
+    }
+  </script>
+</body>
+</html>
+
+
+* {
+    font-size: 1.3vw;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  html {
+    --scrollbarBG: #fff;
+    --thumbBG: #90a4ae;
+  }
+  
+  body {
+    background: #ccc;
+    background-image: url("bg-1.jpg");
+    background-size: cover;
+  }
+  body .card {
+    height: 45vw;
+    width: 35vw;
+    background-color:#ccc;
+    margin-left: 65vw;
+    margin-top: 5vw;
+    box-shadow: 2vw 2vw 12vw 3vw #ccc;
+    
+  }
+  body .card #header {
+    height: 5vw;
+    background: #000;
+    padding: 0vw;
+  }
+  body .card #header h1 {
+    color: #fff;
+    font-size: 2vw;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 1vw;
+  }
+  body .card #message-section::-webkit-scrollbar {
+    width: 10px;
+  }
+  body .card #message-section {
+    height: 32vw;
+    padding: 0 2.5vw;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+  }
+  body .card #message-section::-webkit-scrollbar-track {
+    background: var(--scrollbarBG);
+  }
+  body .card #message-section::-webkit-scrollbar-thumb {
+    background-color: var(--thumbBG);
+    border-radius: 6px;
+    border: 3px solid var(--scrollbarBG);
+  }
+  body .card #message-section #bot,
+  body .card #message-section #user {
+    position: relative;
+    bottom: 0;
+    min-height: 1.5vw;
+    border: 0.15vw solid #777;
+    background-color: #fff;
+    border-radius: 0px 1.5vw 1.5vw 1.8vw;
+    padding: 1vw;
+    margin: 1.5vw 0;
+  }
+  body .card #message-section #user {
+    border: 1.5px solid #000;
+    border-radius: 1.5vw 0vw 1.5vw 1.8vw;
+    background-color: #000;
+    float: right;
+  }
+  body .card #message-section #user #user-response {
+    color: #fff;
+  }
+  body .card #message-section .message {
+    color: #000;
+    clear: both;
+    line-height: 1.2vw;
+    font-size: 1.2vw;
+    padding: 8px;
+    position: relative;
+    margin: 8px 0;
+    max-width: 85%;
+    word-wrap: break-word;
+    z-index: 2;
+  }
+  body .card #input-section {
+    z-index: 1;
+    padding: 1.5 2.5vw;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    overflow: hidden;
+    height: 7vw;
+    width: 95%;
+  }
+  body .card #input-section input {
+    color: #000;
+    min-width: 0.5vw;
+    outline: none;
+    height: 5vw;
+    width: 26vw;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: solid #000 0.1vw;
+  }
+  body .card .send {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    flex: 0 0 auto;
+    margin-left: 2vw;
+    margin-right: 0vw;
+    padding: 0;
+    position: relative;
+    outline: none;
+  }
+  body .card .send .circle {
+    position: relative;
+    width: 4.8vw;
+    height: 4.8vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  body .card .send .circle i {
+    font-size: 3vw;
+    margin-left: -1vw;
+    margin-top: 1vw;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
